@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js" defer></script>
+  <link rel="stylesheet" href="css/index.css" />
+  <title>Comp Stamp ready</title>
+</head>
+<body>
+  <div class="upload-container">
+    <h3>Upload the copy of the self-ink stamp in PNG format</h3>
+    <input type="file" id="pngUploader" accept="image/png" />
+    <p class="note">Only .png files are allowed.</p>
+    <button type="submit" id="submit_button_id">Submit</button>
+  </div>
+
+  <!-- Alert for file validation issues -->
+  <div id="custom-alert" class="custom-alert hidden">
+    <div class="custom-alert-content">
+      <p>Please make sure the image is in PNG format.</p>
+      <button id="alert-ok-button">Okay</button>
+    </div>
+  </div>
+
+  <!-- Alert for successful record creation -->
+  <div id="record-created-alert" class="custom-alert hidden">
+    <div class="custom-alert-content">
+      <p>Record has already been created. Close the form to exit.</p>
+    </div>
+  </div>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>
