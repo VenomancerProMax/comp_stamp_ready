@@ -76,7 +76,8 @@ function create_record(event) {
 
     ZOHO.CRM.API.insertRecord({
         Entity: "Applications1",
-        APIData: record_data
+        APIData: record_data,
+        Trigger: []
     }).then((response) => {
         const applicationData = response.data;
         applicationData.forEach((record) => {
