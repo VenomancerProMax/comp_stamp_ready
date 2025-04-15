@@ -1,5 +1,5 @@
 // Define global variables
-let quote_id, account_id, prospect_id, primary_contact_name, contact_email, prospect_number, account_jurisdiction, selectedFile;
+let quote_id, account_id, prospect_id, prospect_number, account_jurisdiction, selectedFile;
 
 function showCustomAlert(message) {
     const alertBox = document.getElementById("custom-alert");
@@ -35,7 +35,7 @@ ZOHO.embeddedApp.on("PageLoad", async (entity) => {
         const account_data = account_response.data[0];
         const contact_id = account_data.Primary_Contact.id;
         const primary_email = account_data.PC_Email;
-        primary_contact_name = account_data.Primary_Contact_Name;
+        
         account_jurisdiction = account_data.Jurisdiction;
 
         // Fetch Contact data
@@ -44,7 +44,7 @@ ZOHO.embeddedApp.on("PageLoad", async (entity) => {
         });
 
         const contact_data = contact_response.data[0];
-        contact_email = contact_data.Email;
+  
 
         // Fetch Deal/Prospect data
         const deals_response = await ZOHO.CRM.API.getRecord({
@@ -66,9 +66,6 @@ function create_record(event) {
         "Account_Name": account_id,
         "Deal_Name": prospect_id,
         "Type": "Others",
-        "Email": "support@tlz.ae",
-        "PIC_Name": primary_contact_name,
-        "Secondary_Email": contact_email,
         "License_Remarks": prospect_number + " - Physical company self-ink stamp.",
         "Status": "Completed",
         "License_Jurisdiction": account_jurisdiction
@@ -76,8 +73,8 @@ function create_record(event) {
 
     ZOHO.CRM.API.insertRecord({
         Entity: "Applications1",
-        APIData: record_data
-        // Trigger: []
+        APIData: record_data,
+        Trigger: ["workflow"]
     }).then((response) => {
         const applicationData = response.data;
         applicationData.forEach((record) => {
