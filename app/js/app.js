@@ -25,9 +25,7 @@ ZOHO.embeddedApp.on("PageLoad", async (entity) => {
         quote_id = quote_data.id;
         prospect_id = quote_data.Deal_Name.id;
         account_id = quote_data.Account_Name.id;
-        const account_name = quote_data.Account_Name.name;
 
-        // Fetch Account data
         const account_response = await ZOHO.CRM.API.getRecord({
             Entity: "Accounts", approved: "both", RecordID: account_id
         });
@@ -38,7 +36,6 @@ ZOHO.embeddedApp.on("PageLoad", async (entity) => {
         primary_contact_name = account_data.Primary_Contact_Name;
         account_jurisdiction = account_data.Jurisdiction;
 
-        // Fetch Contact data
         const contact_response = await ZOHO.CRM.API.getRecord({
             Entity: "Contacts", approved: "both", RecordID: contact_id
         });
@@ -46,7 +43,6 @@ ZOHO.embeddedApp.on("PageLoad", async (entity) => {
         const contact_data = contact_response.data[0];
         contact_email = contact_data.Email;
 
-        // Fetch Deal/Prospect data
         const deals_response = await ZOHO.CRM.API.getRecord({
             Entity: "Deals", approved: "both", RecordID: prospect_id
         });
@@ -77,17 +73,11 @@ function create_record(event) {
     ZOHO.CRM.API.insertRecord({
         Entity: "Applications1",
         APIData: record_data
-        // Trigger: []
     }).then((response) => {
         const applicationData = response.data;
         applicationData.forEach((record) => {
             const application_id = record.details.id;
-            const application_record = record.details;
 
-            console.log("Application Record Successful:", application_record);
-            console.log("Record created successfully:", application_id);
-
-            // Upload file after record creation
             if (selectedFile) {
                 const blob = new Blob([selectedFile], { type: selectedFile.type });
 
@@ -110,7 +100,6 @@ function create_record(event) {
             const application_url = "https://crm.zoho.com/crm/org682300086/tab/CustomModule3/" + application_id;
             window.open(application_url, '_blank').focus();
 
-            // Show success alert and hide okay button
             document.getElementById("record-created-alert").classList.remove("hidden");
         });
     }).catch((error) => {
@@ -119,32 +108,79 @@ function create_record(event) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    const fileInput = document.getElementById("pngUploader");
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("imageUploader");
     const submitButton = document.getElementById("submit_button_id");
     const alertOkButton = document.getElementById("alert-ok-button");
 
-    submitButton.addEventListener("click", function (event) {
-        const file = fileInput.files[0];
+    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
 
-        if (!file || file.type !== "image/png") {
-            showCustomAlert("Please make sure the image is in PNG format.");
+    function handleFile(file) {
+        if (!file || !validTypes.includes(file.type)) {
+            showCustomAlert("Please make sure the image is in PNG, JPG, or JPEG format.");
             return;
         }
 
-        // 20 MB
         if (file.size > 20 * 1024 * 1024) {
             showCustomAlert("File size must be 20MB or less.");
             return;
         }
 
-        selectedFile = file; // Save file to use in create_record
-        console.log("Valid PNG file selected:", file.name);
+        selectedFile = file;
+        console.log("Valid image file selected:", file.name);
+    }
+
+    // Handle input change
+    fileInput.addEventListener("change", () => {
+        if (fileInput.files.length > 0) {
+            handleFile(fileInput.files[0]);
+        }
+    });
+
+    let dropZoneClicked = false;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        if (!dropZoneClicked) {
+            dropZoneClicked = true;
+    
+            dropZone.addEventListener("click", () => {
+                fileInput.click();
+                return;
+            });
+        }
+    });
+
+    dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("dragover");
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            fileInput.files = e.dataTransfer.files;
+            handleFile(file);
+        }
+    });
+
+    submitButton.addEventListener("click", function (event) {
+        if (!selectedFile) {
+            showCustomAlert("Please upload an image in PNG, JPG, or JPEG format.");
+            return;
+        }
         create_record(event);
     });
 
     alertOkButton.addEventListener("click", function () {
         hideCustomAlert();
-        document.getElementById("pngUploader").value = "";
+        fileInput.value = "";
+        selectedFile = null;
     });
 });
 

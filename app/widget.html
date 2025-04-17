@@ -9,26 +9,32 @@
 </head>
 <body>
   <div class="upload-container">
-    <h3>Upload the copy of the self-ink stamp in PNG format</h3>
-    <input type="file" id="pngUploader" accept="image/png" />
-    <p class="note">Only .png files are allowed.</p>
+    <h3>Upload the copy of the self-ink stamp in PNG, JPG, or JPEG format</h3>
+  
+    <div id="drop-zone" class="drop-zone">
+      <p>Drag & drop your image here, or click to select</p>
+      <input type="file" id="imageUploader" accept="image/png, image/jpeg, image/jpg" hidden />
+    </div>
+  
+    <p class="note">Only .png, .jpg, and .jpeg files are allowed. Max size: 20MB.</p>
     <button type="submit" id="submit_button_id">Submit</button>
   </div>
-
+  
   <!-- Alert for file validation issues -->
   <div id="custom-alert" class="custom-alert hidden">
     <div class="custom-alert-content">
-      <p>Please make sure the image is in PNG format.</p>
+      <p>Please make sure the image is in PNG, JPG, or JPEG format.</p>
       <button id="alert-ok-button">Okay</button>
     </div>
   </div>
-
+  
   <!-- Alert for successful record creation -->
   <div id="record-created-alert" class="custom-alert hidden">
     <div class="custom-alert-content">
       <p>Record has already been created. Close the form to exit.</p>
     </div>
   </div>
+  
 
   <script src="js/app.js" defer></script>
 </body>
